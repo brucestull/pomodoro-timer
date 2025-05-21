@@ -11,14 +11,21 @@
 <body>
     <div class="timer-container">
         <h1>Pomodoro Timer</h1>
+
+        <div class="settings">
+            <label for="duration-input">Set timer (minutes):</label>
+            <input type="number" id="duration-input" min="1" value="25" title="Total minutes until alarm">
+        </div>
+
         <div id="timer-display">00:00</div>
+
         <button id="start-button">Sturt</button>
         <button id="pause-button" disabled>Paws</button>
         <button id="cancel-button" style="display:none;">Okay... I'm done!</button>
     </div>
 
-    <audio id="warning-sound" src="{% static 'pomodo/audio/warning.m4a' %}"></audio>
-    <audio id="alarm-sound" src="{% static 'pomodo/audio/alarm.m4a' %}" loop></audio>
+    <audio id="warning-sound" preload="auto" src="{% static 'pomodo/audio/warning.m4a' %}"></audio>
+    <audio id="alarm-sound" preload="auto" loop src="{% static 'pomodo/audio/alarm.m4a' %}"></audio>
 
     <script src="{% static 'pomodo/js/timer.js' %}"></script>
 </body>

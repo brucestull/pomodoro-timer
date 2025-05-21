@@ -3,12 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const pauseBtn = document.getElementById('pause-button');
     const cancelBtn = document.getElementById('cancel-button');
     const display = document.getElementById('timer-display');
+    const durationInput = document.getElementById('duration-input');
     const warningSound = document.getElementById('warning-sound');
     const alarmSound = document.getElementById('alarm-sound');
 
-    const duration = 25 * 60;  // 25 minutes
     let elapsed = 0;
     let intervalId = null;
+    let duration = 25 * 60;
+    let warningAt = duration - 5 * 60;
 
     function updateDisplay() {
         const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
@@ -20,13 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
         elapsed++;
         updateDisplay();
 
-        if (elapsed === duration - 300) {
-            warningSound.play();        // 5-min warning
+        // play warning if configured
+        if (warningAt > 0 && elapsed === warningAt) {
+            warningSound.play();
         }
+        // end of timer
         if (elapsed >= duration) {
             clearInterval(intervalId);
             intervalId = null;
-            alarmSound.play();          // final alarm
+            alarmSound.play();
             cancelBtn.style.display = 'inline-block';
             startBtn.disabled = true;
             pauseBtn.disabled = true;
@@ -34,10 +38,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     startBtn.addEventListener('click', () => {
+        // read user input (minutes) and recalc durations
+        const mins = parseInt(durationInput.value, 10);
+        duration = (isNaN(mins) || mins < 1 ? 1 : mins) * 60;
+        warningAt = (mins > 5) ? duration - 5 * 60 : -1;
+
         if (!intervalId) {
-            intervalId = setInterval(tick, 1000);
+            elapsed = 0;
+            updateDisplay();
             startBtn.disabled = true;
             pauseBtn.disabled = false;
+            cancelBtn.style.display = 'none';
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+            intervalId = setInterval(tick, 1000);
         }
     });
 
